@@ -72,6 +72,4 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 
 To run docker locally, type:
 
-´´´bash
-docker run --name chat-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres
-´´´
+### `docker run --name chat-db -e POSTGRES_PASSWORD=postgres -p 5432:5432 -d postgres`
