@@ -13,6 +13,10 @@ const Chat = () => {
   const [socket, setSocket] = useState(null);
 
   useEffect(() => {
+    fetchMessages();
+  }, []);
+
+  useEffect(() => {
     // Create a new WebSocket instance and establish a connection
     const newSocket = new WebSocket(WEBSOCKET_PROTOCOL + HOST_AND_PORT);
 
@@ -32,6 +36,7 @@ const Chat = () => {
         const receivedMessage = event.data;
         console.log("receivedMessage=", receivedMessage);
         const messageJson = JSON.parse(receivedMessage);
+        console.log("messages=", messages);
         // add unique id
         messageJson.id = messages.length + 1;
         console.log("messageJson=", messageJson);
@@ -45,22 +50,18 @@ const Chat = () => {
     };
   }, []);
 
-  useEffect(() => {
-    fetchMessages();
-  }, []);
-
   const fetchMessages = async () => {
         try {
             const response = await axios.get(PROTOCOL + HOST_AND_PORT + '/messages', {
                 mode: 'cors',
             });
-            const messages = response.data;
+            const responseMessages = response.data;
             // change id to locally unique id (we don't want to use database ids in here)
-            var count = 0;
-            messages.map(message => message.id = count++);
-            setMessages(messages);
+            var count = 1; // 0 ?
+            responseMessages.map(message => message.id = count++);
+            setMessages(responseMessages);
         } catch (error) {
-            console.error('Error retrieving messages:', error);
+            console.error('Error retrieving response messages:', error);
         }
     };
 
@@ -143,9 +144,14 @@ const Chat = () => {
         text: inputValue,
       };
 
+      console.log('state messages=', messages);
       setMessages([...messages, newMessage]);
       setInputValue('');
     }
+  };
+
+  const boldTextStyle = {
+    fontWeight: 'bold',
   };
 
   return (
@@ -167,7 +173,7 @@ const Chat = () => {
             {messages.map((message) => (
               <div key={message.id} className="message">
                 {message.name + ' '}
-                {message.text}
+                <span style={boldTextStyle}>{message.text}</span>
               </div>
             ))}
           </div>
