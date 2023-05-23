@@ -16,6 +16,10 @@ const Chat = () => {
     fetchMessages();
   }, []);
 
+  const getMessages = () => {
+    return messages;
+  }
+
   useEffect(() => {
     // Create a new WebSocket instance and establish a connection
     const newSocket = new WebSocket(WEBSOCKET_PROTOCOL + HOST_AND_PORT);
@@ -34,16 +38,10 @@ const Chat = () => {
 
     newSocket.addEventListener('message', (event) => {
         const receivedMessage = event.data;
-        console.log("receivedMessage=", receivedMessage);
-        /** TODO at the time being message = [], for what reason?
         const messageJson = JSON.parse(receivedMessage);
-        console.log("messages=", messages);
-        // add unique id
-        messageJson.id = messages.length + 1;
-        console.log("messageJson=", messageJson);
-        setMessages([...messages, messageJson]);
-        */
-        fetchMessages();
+        var localMessages = getMessages();
+        messageJson.id = localMessages.length + 1;
+        setMessages([...localMessages, messageJson]);
     });
   
 
@@ -188,7 +186,7 @@ const Chat = () => {
               type="text"
               id="messageInput"
               value={inputValue}
-              onChange={handleInputChange}      
+              onChange={handleInputChange}
               onKeyDown={handleMessageKeyDown}
               placeholder="Type your message..."
             />
