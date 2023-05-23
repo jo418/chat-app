@@ -35,12 +35,15 @@ const Chat = () => {
     newSocket.addEventListener('message', (event) => {
         const receivedMessage = event.data;
         console.log("receivedMessage=", receivedMessage);
+        /** TODO at the time being message = [], for what reason?
         const messageJson = JSON.parse(receivedMessage);
         console.log("messages=", messages);
         // add unique id
         messageJson.id = messages.length + 1;
         console.log("messageJson=", messageJson);
         setMessages([...messages, messageJson]);
+        */
+        fetchMessages();
     });
   
 
@@ -59,6 +62,7 @@ const Chat = () => {
             // change id to locally unique id (we don't want to use database ids in here)
             var count = 1; // 0 ?
             responseMessages.map(message => message.id = count++);
+            console.log('responseMessages=', responseMessages);
             setMessages(responseMessages);
         } catch (error) {
             console.error('Error retrieving response messages:', error);
@@ -145,7 +149,9 @@ const Chat = () => {
       };
 
       console.log('state messages=', messages);
-      setMessages([...messages, newMessage]);
+      const newMessages = [...messages, newMessage];
+      console.log('state new messages=', newMessages);
+      setMessages(newMessages);
       setInputValue('');
     }
   };
