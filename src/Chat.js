@@ -16,10 +16,6 @@ const Chat = () => {
     fetchMessages();
   }, []);
 
-  const getMessages = () => {
-    return messages;
-  }
-
   useEffect(() => {
     // Create a new WebSocket instance and establish a connection
     const newSocket = new WebSocket(WEBSOCKET_PROTOCOL + HOST_AND_PORT);
@@ -39,11 +35,12 @@ const Chat = () => {
     newSocket.addEventListener('message', (event) => {
         const receivedMessage = event.data;
         const messageJson = JSON.parse(receivedMessage);
-        var localMessages = getMessages();
-        messageJson.id = localMessages.length + 1;
-        setMessages([...localMessages, messageJson]);
+        setMessages(prevMessages => {
+          // we should use unique id
+          messageJson.id = prevMessages.length + 1;
+          return [...prevMessages, messageJson];
+        });
     });
-  
 
     // Clean up the WebSocket connection on component unmount
     return () => {
@@ -60,7 +57,6 @@ const Chat = () => {
             // change id to locally unique id (we don't want to use database ids in here)
             var count = 1; // 0 ?
             responseMessages.map(message => message.id = count++);
-            console.log('responseMessages=', responseMessages);
             setMessages(responseMessages);
         } catch (error) {
             console.error('Error retrieving response messages:', error);
